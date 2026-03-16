@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, MessageSquare, Send, Loader2 } from 'lucide-react';
+import { Search, Filter, X, MessageSquare, Send, Loader2, Bell, AlertCircle } from 'lucide-react';
 import { BaseCrudService } from '@/integrations';
 import { PoliciesandSchemes } from '@/entities';
 import Header from '@/components/Header';
@@ -24,10 +24,24 @@ export default function DashboardPage() {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [dismissedNotifications, setDismissedNotifications] = useState<Set<string>>(new Set());
+  const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
 
   // Extract unique categories and case types
   const categories = Array.from(new Set(policies.map(p => p.category).filter(Boolean)));
   const caseTypes = Array.from(new Set(policies.map(p => p.caseType).filter(Boolean)));
+
+  // Get new policies (created after last load)
+  const newPolicies = policies.filter(p => {
+    if (!lastLoadTime || !p._createdDate) return false;
+    return new Date(p._createdDate) > lastLoadTime && !dismissedNotifications.has(p._id);
+  });
+
+  // Get policies relevant to selected case type
+  const getRelevantPolicies = (caseType: string) => {
+    return policies.filter(p => p.caseType === caseType);
+  };
 
   useEffect(() => {
     loadPolicies();
@@ -53,6 +67,7 @@ export default function DashboardPage() {
       setIsLoading(true);
       const result = await BaseCrudService.getAll<PoliciesandSchemes>('policiesandschemes');
       setPolicies(result.items);
+      setLastLoadTime(new Date());
     } catch (error) {
       console.error('Failed to load policies:', error);
     } finally {
@@ -102,18 +117,36 @@ export default function DashboardPage() {
     setChatMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsChatLoading(true);
 
-    // Simulate AI response
+    // Simulate AI response with context-aware suggestions
     setTimeout(() => {
-      const responses = [
-        `Based on your query about "${userMessage}", I recommend reviewing the relevant policies in our database. Would you like me to filter policies related to this topic?`,
-        `I understand you're asking about "${userMessage}". Here are the next steps: 1) Review applicable policies, 2) Check compliance requirements, 3) Consult with legal advisors if needed.`,
-        `Regarding "${userMessage}", I found several relevant policies in our system. The key considerations are regulatory compliance, documentation requirements, and timeline constraints.`,
-        `For "${userMessage}", I suggest starting with policies in the related category. Make sure to check recent updates and amendments that might affect your case.`
-      ];
+      let responses: string[] = [];
+      
+      // Check if user is asking about case types
+      const caseTypeMatch = caseTypes.find(ct => userMessage.toLowerCase().includes(ct.toLowerCase()));
+      if (caseTypeMatch) {
+        const relevantPolicies = getRelevantPolicies(caseTypeMatch);
+        responses = [
+          `For ${caseTypeMatch} cases, I found ${relevantPolicies.length} relevant policies and schemes. Key areas to review: ${relevantPolicies.slice(0, 2).map(p => p.policyTitle).join(', ')}. Would you like me to filter these for you?`,
+          `Regarding ${caseTypeMatch}, the applicable schemes and acts include: ${relevantPolicies.slice(0, 3).map(p => p.policyTitle).join(', ')}. I recommend reviewing these in order of relevance to your case.`,
+          `For ${caseTypeMatch} cases, here are the critical policies: ${relevantPolicies.slice(0, 2).map(p => p.policyTitle).join(', ')}. Make sure to check recent amendments and compliance requirements.`
+        ];
+      } else {
+        responses = [
+          `Based on your query about "${userMessage}", I recommend reviewing the relevant policies in our database. Would you like me to filter policies related to this topic?`,
+          `I understand you're asking about "${userMessage}". Here are the next steps: 1) Review applicable policies, 2) Check compliance requirements, 3) Consult with legal advisors if needed.`,
+          `Regarding "${userMessage}", I found several relevant policies in our system. The key considerations are regulatory compliance, documentation requirements, and timeline constraints.`,
+          `For "${userMessage}", I suggest starting with policies in the related category. Make sure to check recent updates and amendments that might affect your case.`
+        ];
+      }
+      
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       setChatMessages(prev => [...prev, { role: 'assistant', content: randomResponse }]);
       setIsChatLoading(false);
     }, 1500);
+  };
+
+  const dismissNotification = (policyId: string) => {
+    setDismissedNotifications(prev => new Set([...prev, policyId]));
   };
 
   return (
@@ -121,6 +154,52 @@ export default function DashboardPage() {
       <Header />
 
       <div className="w-full max-w-[100rem] mx-auto px-8 md:px-16 lg:px-24 py-12">
+        {/* Notifications Panel */}
+        {newPolicies.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 border-l-4 border-primary bg-primary/5 p-6"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-heading text-lg text-textprimary mb-2">
+                    New Schemes & Acts Available
+                  </h3>
+                  <p className="font-paragraph text-sm text-textprimary/70 mb-4">
+                    {newPolicies.length} new {newPolicies.length === 1 ? 'policy' : 'policies'} added to the system
+                  </p>
+                  <div className="space-y-2">
+                    {newPolicies.map(policy => (
+                      <div key={policy._id} className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-paragraph text-sm font-semibold text-textprimary">
+                            {policy.policyTitle}
+                          </p>
+                          {policy.caseType && (
+                            <p className="font-paragraph text-xs text-textprimary/60 mt-1">
+                              Case Type: {policy.caseType}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => dismissNotification(policy._id)}
+                          className="text-textprimary/40 hover:text-textprimary transition-colors flex-shrink-0"
+                          aria-label="Dismiss notification"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Page Header */}
         <div className="mb-12">
           <h1 className="font-heading text-4xl md:text-5xl text-textprimary mb-4">
@@ -237,39 +316,49 @@ export default function DashboardPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
             >
-              {filteredPolicies.map((policy, index) => (
-                <motion.div
-                  key={policy._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  onClick={() => handlePolicyClick(policy)}
-                  className="border border-textprimary/20 p-6 hover:border-primary transition-colors cursor-pointer group"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-paragraph text-lg text-textprimary font-semibold group-hover:text-primary transition-colors">
-                      {policy.policyTitle || 'Untitled Policy'}
-                    </h3>
-                  </div>
-                  
-                  <p className="font-paragraph text-sm text-textprimary/70 mb-4 line-clamp-3">
-                    {policy.policyDescription || 'No description available'}
-                  </p>
+              {filteredPolicies.map((policy, index) => {
+                const isNew = newPolicies.some(np => np._id === policy._id);
+                return (
+                  <motion.div
+                    key={policy._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    onClick={() => handlePolicyClick(policy)}
+                    className={`border p-6 hover:border-primary transition-colors cursor-pointer group relative ${
+                      isNew ? 'border-primary bg-primary/2' : 'border-textprimary/20'
+                    }`}
+                  >
+                    {isNew && (
+                      <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-2 py-1 text-xs font-semibold">
+                        NEW
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-paragraph text-lg text-textprimary font-semibold group-hover:text-primary transition-colors pr-8">
+                        {policy.policyTitle || 'Untitled Policy'}
+                      </h3>
+                    </div>
+                    
+                    <p className="font-paragraph text-sm text-textprimary/70 mb-4 line-clamp-3">
+                      {policy.policyDescription || 'No description available'}
+                    </p>
 
-                  <div className="flex flex-wrap gap-2">
-                    {policy.category && (
-                      <span className="font-paragraph text-xs px-3 py-1 bg-textprimary/5 text-textprimary border border-textprimary/10">
-                        {policy.category}
-                      </span>
-                    )}
-                    {policy.caseType && (
-                      <span className="font-paragraph text-xs px-3 py-1 bg-primary/10 text-primary border border-primary/20">
-                        {policy.caseType}
-                      </span>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="flex flex-wrap gap-2">
+                      {policy.category && (
+                        <span className="font-paragraph text-xs px-3 py-1 bg-textprimary/5 text-textprimary border border-textprimary/10">
+                          {policy.category}
+                        </span>
+                      )}
+                      {policy.caseType && (
+                        <span className="font-paragraph text-xs px-3 py-1 bg-primary/10 text-primary border border-primary/20">
+                          {policy.caseType}
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </motion.div>
           ) : (
             <div className="text-center py-20">
@@ -333,6 +422,37 @@ export default function DashboardPage() {
                     <p className="font-paragraph text-base text-textprimary">
                       {selectedPolicy.caseType}
                     </p>
+                    
+                    {/* Related Schemes and Acts for this Case Type */}
+                    <div className="mt-6 pt-6 border-t border-textprimary/10">
+                      <h4 className="font-paragraph text-sm text-textprimary/60 font-semibold mb-3">
+                        Other Schemes & Acts for {selectedPolicy.caseType} Cases
+                      </h4>
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {getRelevantPolicies(selectedPolicy.caseType)
+                          .filter(p => p._id !== selectedPolicy._id)
+                          .slice(0, 5)
+                          .map(relatedPolicy => (
+                            <div
+                              key={relatedPolicy._id}
+                              className="p-3 bg-textprimary/5 border border-textprimary/10 hover:border-primary transition-colors cursor-pointer"
+                              onClick={() => {
+                                setSelectedPolicy(relatedPolicy);
+                                setSearchParams({ policy: relatedPolicy._id });
+                              }}
+                            >
+                              <p className="font-paragraph text-sm font-semibold text-textprimary hover:text-primary transition-colors">
+                                {relatedPolicy.policyTitle}
+                              </p>
+                              {relatedPolicy.category && (
+                                <p className="font-paragraph text-xs text-textprimary/60 mt-1">
+                                  {relatedPolicy.category}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
                   </div>
                 )}
 
