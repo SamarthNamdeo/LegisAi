@@ -1,21 +1,20 @@
-# Wixstro - Wix Astro Template
+# LegisAi
 
-A modern, full-featured Wix Astro template built with React, TypeScript, and Tailwind CSS. This template provides a solid foundation for building dynamic, interactive websites with Wix's powerful ecosystem.
+This Ai legislative dashboard is made to give people the right acts, schemes and policies from the Indian constitution. This gives citizens the power to find the right act and fight confidently against injustice.
 
-## 🚀 Features
+## ♦️Problem Statement
+The Indian constitution is very huge and contains thousands of acts and rules.This huge quantity of documents become very difficult for the common people , lawyers and advocates to find or understand.Sometimes the right act is also hidden from the people by the government, lawyers, judges and advocates.
 
-- **Astro Framework** - Modern static site generator with server-side rendering
-- **React Integration** - Full React support with JSX components
-- **TypeScript** - Type-safe development experience
-- **Tailwind CSS** - Utility-first CSS framework with custom components
-- **Wix Integration** - Seamless integration with Wix services and APIs
-- **Modern UI Components** - Radix UI components with custom styling
-- **Authentication** - Built-in member authentication and protected routes
-- **CMS Integration** - Content management system integration
-- **Client-side Routing** - React Router for seamless navigation
-- **Responsive Design** - Mobile-first responsive design
-- **Testing** - Vitest testing framework setup
-- **Development Tools** - ESLint, TypeScript checking, and more
+## 🎯Solution
+As a solution we made our legislative dashboard LegisAI.This AI helps the common people to find the right act,scheme or policy and understand it easily all at one place. With this AI you can search for acts and find notifications for new acts and schemes from the Indian government. 
+
+## ✨Features
+- Get all the right acts, policies, schemes at one place.
+- AI chatbot to just write your query and get suggestions quickly.
+- Find the next steps to be taken.
+- Search for different acts and policies.
+- Get the notifications for the latest policies and acts from Indian government.
+- Filter the acts, schemes as per your need.
 
 ## 🛠️ Tech Stack
 
@@ -23,11 +22,6 @@ A modern, full-featured Wix Astro template built with React, TypeScript, and Tai
 - **Frontend**: React 18.3.0
 - **Styling**: Tailwind CSS 3.4.14
 - **Language**: TypeScript 5.8.3
-- **UI Components**: Radix UI
-- **State Management**: Zustand
-- **Forms**: React Hook Form with Zod validation
-- **Testing**: Vitest
-- **Build Tool**: Vite
 - **Deployment**: Cloudflare
 
 
@@ -78,36 +72,10 @@ main/
 └── eslint-rules/          # Custom ESLint rules
 ```
 
-## 🎨 UI Components
 
-This template includes a comprehensive set of UI components built with Radix UI and styled with Tailwind CSS:
 
-- **Layout**: Accordion, Collapsible, Tabs, Sheet
-- **Forms**: Input, Select, Checkbox, Radio Group, Switch
-- **Navigation**: Navigation Menu, Menubar, Breadcrumb
-- **Feedback**: Alert, Toast, Progress, Skeleton
-- **Overlays**: Dialog, Popover, Tooltip, Hover Card
-- **Data Display**: Table, Card, Badge, Avatar
-- **Interactive**: Button, Toggle, Slider, Command
 
-## 🔧 Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run release` - Release to Wix
-- `npm run env` - Pull environment variables
-- `npm run check` - Type check with Astro
-- `npm run test:run` - Run tests
-- `npm install` - Install dependencies
-
-## 🧪 Testing
-
-The project includes Vitest for testing:
-
-```bash
-npm run test:run
-```
 
 ## 📱 Responsive Design
 
