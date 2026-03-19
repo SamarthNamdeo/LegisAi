@@ -19,8 +19,8 @@ export default {
                 '9xl': ['8rem', { lineHeight: '1', letterSpacing: '-0.07em', fontWeight: '900' }],
             },
             fontFamily: {
-                heading: "space grotesk",
-                paragraph: "azeret-mono"
+                heading: ["fraunces", "serif"],
+                paragraph: ["noticia text", "serif"]
             },
             colors: {
                 darkbackground: '#000000',
