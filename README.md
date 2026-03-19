@@ -18,98 +18,19 @@ As a solution we made our legislative dashboard LegisAI.This AI helps the common
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Astro 5.8.0
-- **Frontend**: React 18.3.0
-- **Styling**: Tailwind CSS 3.4.14
-- **Language**: TypeScript 5.8.3
+- **Framework**: Astro
+- **Frontend**: React
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 - **Deployment**: Cloudflare
 
+## 🛑Limitations
+- Not all the acts, schemes and policies are available.
+- The AI chatbot may not be able to tell about all the type of cases.
+- The AI chatbot may tell wrong schemes and policies.
+- The dashboard only provides limited schemes.
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js (version 18 or higher)
-- npm or yarn package manager
-- Wix account and site
-
-### Installation
-
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-2. **Set up environment variables**:
-   ```bash
-   npm run env
-   ```
-
-3. **Start development server**:
-   ```bash
-   npm run dev
-   ```
-
-The development server will start and you can view your site at `http://localhost:4321`.
-
-## 📁 Project Structure
-
-```
-main/
-├── src/
-│   ├── components/          # React components
-│   │   ├── ui/             # Reusable UI components
-│   │   ├── Head.tsx        # Page head component
-│   │   └── Router.tsx      # Routing component
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Utility functions
-│   ├── pages/              # Astro pages
-│   └── styles/             # Global styles
-├── integrations/           # Wix integrations
-│   ├── cms/               # CMS integration
-│   └── members/           # Member authentication
-├── public/                # Static assets
-└── eslint-rules/          # Custom ESLint rules
-```
-
-
-
-
-
-
-## 📱 Responsive Design
-
-The template is built with a mobile-first approach and includes:
-
-- Responsive breakpoints
-- Touch-friendly interactions
-- Optimized images
-- Flexible layouts
-
-## 🚀 Deployment
-
-The template is configured for deployment on Cloudflare:
-
-```bash
-npm run build
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-## 🆘 Support
-
-For support and questions:
-
-- Check the [Wix Developer Documentation](https://dev.wix.com/)
-- Review the [Astro Documentation](https://docs.astro.build/)
-
-
----
-
-Built with ❤️ using Wix Vibe, Astro, and modern web technologies.
+## 🔮Future Scope
+- To expand the area of search of the AI chatbot.
+- To make the chatbot less frequent to mistakes.
+- Add other all types of cases and problems.
