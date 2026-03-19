@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, Bell } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Header() {
@@ -21,6 +21,19 @@ export default function Header() {
               className="font-paragraph text-base text-textprimary hover:text-primary transition-colors"
             >
               Home
+            </Link>
+            <Link 
+              to="/policies" 
+              className="font-paragraph text-base text-textprimary hover:text-primary transition-colors"
+            >
+              Policies
+            </Link>
+            <Link 
+              to="/notifications" 
+              className="font-paragraph text-base text-textprimary hover:text-primary transition-colors flex items-center gap-2"
+            >
+              <Bell className="w-4 h-4" />
+              Updates
             </Link>
             <Link 
               to="/dashboard" 
@@ -55,6 +68,21 @@ export default function Header() {
               className="font-paragraph text-base text-textprimary hover:text-primary transition-colors"
             >
               Home
+            </Link>
+            <Link 
+              to="/policies" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-paragraph text-base text-textprimary hover:text-primary transition-colors"
+            >
+              Policies
+            </Link>
+            <Link 
+              to="/notifications" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-paragraph text-base text-textprimary hover:text-primary transition-colors flex items-center gap-2"
+            >
+              <Bell className="w-4 h-4" />
+              Updates
             </Link>
             <Link 
               to="/dashboard" 

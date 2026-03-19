@@ -4,6 +4,8 @@ import { ScrollToTop } from '@/lib/scroll-to-top';
 import ErrorPage from '@/integrations/errorHandlers/ErrorPage';
 import HomePage from '@/components/pages/HomePage';
 import DashboardPage from '@/components/pages/DashboardPage';
+import PoliciesPage from '@/components/pages/PoliciesPage';
+import NotificationsPage from '@/components/pages/NotificationsPage';
 
 // Layout component that includes ScrollToTop
 function Layout() {
@@ -33,6 +35,20 @@ const router = createBrowserRouter([
         element: <DashboardPage />,
         routeMetadata: {
           pageIdentifier: 'dashboard',
+        },
+      },
+      {
+        path: "policies",
+        element: <PoliciesPage />,
+        routeMetadata: {
+          pageIdentifier: 'policies',
+        },
+      },
+      {
+        path: "notifications",
+        element: <NotificationsPage />,
+        routeMetadata: {
+          pageIdentifier: 'notifications',
         },
       },
       {

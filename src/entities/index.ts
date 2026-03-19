@@ -22,3 +22,24 @@ export interface PoliciesandSchemes {
   /** @wixFieldType text */
   keywords?: string;
 }
+
+
+/**
+ * Collection ID: schemealerts
+ * Interface for SchemeAlerts
+ */
+export interface SchemeAlerts {
+  _id: string;
+  _createdDate?: Date;
+  _updatedDate?: Date;
+  /** @wixFieldType text */
+  alertTitle?: string;
+  /** @wixFieldType text */
+  alertMessage?: string;
+  /** @wixFieldType datetime */
+  notificationDate?: Date | string;
+  /** @wixFieldType url */
+  relevantLink?: string;
+  /** @wixFieldType text */
+  schemeName?: string;
+}
